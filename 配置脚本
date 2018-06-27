@@ -1,0 +1,26 @@
+ 比如说指定IP范围172.25.0.5～172.25.0.100 
+  新建脚本 /root/routing.sh
+#!/bin/bash
+  for  ip  in  {5..100}
+  do
+  ping -c2 -i1 -W1  172.25.0.$ip  &> /dev/null
+ if [ $? -eq 0 ];then
+ >  /opt/up.txt
+ echo "172.25.0.$ip is up" >> /opt/up.txt
+ else
+ > /opt/down.txt
+ echo "172.25.0.$ip is down" >> /opt/down.txt
+ fi
+ done
+添加计划任务crontab -e
+ * */22 * * *      echo `date +%F` >> /opt/up.txt
+* */22 * * *      echo `date +%F` >> /opt/down.txt
+* */22 * * *      /root/routing.sh
+*/1 */22 * * *       mail -s 'ip检测报告1'  收邮件人  < /opt/up.txt
+*/1 */22 * * *       mail -s 'ip检测报告2'  收邮件人  < /opt/down.txt
+
+ 
+
+
+ 
+
